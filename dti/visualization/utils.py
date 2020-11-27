@@ -23,10 +23,12 @@ def get_ddis(ddi_path, drug):
     with open(ddi_path, 'rb') as f:
         ddis_dict = pickle.load(f)
     
-    sim_drugs_with_sim = ddis_dict[drug]
-    sim_drugs = [sim_drug for sim_drug, _ in sim_drugs_with_sim]
-    ddis = [(drug, sim_drug, round(sim, 4)) for sim_drug, sim in sim_drugs_with_sim]
-    return ddis, sim_drugs
+    if ddis_dict.get(drug):
+        sim_drugs_with_sim = ddis_dict[drug]
+        sim_drugs = [sim_drug for sim_drug, _ in sim_drugs_with_sim]
+        ddis = [(drug, sim_drug, round(sim, 4)) for sim_drug, sim in sim_drugs_with_sim]
+        return ddis, sim_drugs
+    return [], []
 
 def get_prev_dtis(ddis, prev_dtis_path, prev_cov_path):
     with open(prev_dtis_path, 'rb') as f:
@@ -37,11 +39,12 @@ def get_prev_dtis(ddis, prev_dtis_path, prev_cov_path):
     
     prev_dtis = []
     for _, sim_drug, _ in ddis:
-        prev_targets = dtis_dict[sim_drug]
-        if prev_targets:
-            for prev_target in prev_targets:
-                if prev_target in prev_cov:
-                    prev_dtis.append((prev_target, sim_drug, 1))
+        if dtis_dict.get(sim_drug):
+            prev_targets = dtis_dict[sim_drug]
+            if prev_targets:
+                for prev_target in prev_targets:
+                    if prev_target in prev_cov:
+                        prev_dtis.append((prev_target, sim_drug, 1))
     
     prev_sars_targets = [t for t, _, _ in prev_dtis]
     return prev_dtis, prev_sars_targets
@@ -90,5 +93,5 @@ def create_and_save_dti_graph(targets, drug, sim_drugs, prev_sars_targets, dtis,
     nx.draw_networkx_labels(G, pos)
 
     # plt.axis("equal")
-    plt.savefig('dti_graph.png')
+    plt.savefig(f'dti_graph_for_{drug}.png')
     plt.show()
