@@ -11,4 +11,5 @@ In this repository, I will organize what I've done for various purposes.
 
 * Visualization
 
-  * [Draw a DTI graph](dti/draw_dti_graph.ipynb)
+  * [Draw a DTI graph using cmd](dti/draw_dti_graph_using_cmd.ipynb)
+  * [Draw a DTI graph with function](dti/draw_dti_graph_with_func.ipynb)
